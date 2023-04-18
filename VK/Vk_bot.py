@@ -1,46 +1,70 @@
-import random
+"""VkTools
+Модуль обновился, смотрите здесь https://github.com/Fsoky/vktools
+pip install vktools -U
+
+"""
+
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
-from course import get_course
-from wiki import get_article
-import Parsing
-import starships
-hi = ['Привет',
-      'Салам Уалейкум',
-      'Здравствуй'
-      ]
+
+from vktools import Keyboard, ButtonColor, Text, OpenLink, Location, Carousel, Element
+
 with open("Key.txt") as file:
     token = file.readline()
 
-vk_session = vk_api.VkApi(token=token)
-vk = vk_session.get_api()
-upload = vk_api.VkUpload(vk)
-longpoll = VkLongPoll(vk_session)
-def send_message(resp):
-    vk.messages.send(user_id=user_id, random_id=random_id, message=resp)
-for event in longpoll.listen():
+session = vk_api.VkApi(token=token)
+api = session.get_api()
+
+
+def send_message(user_id, message, **kwargs):
+    api.messages.send(
+        user_id=user_id,
+        message=message,
+        random_id=0,
+        **kwargs
+    )
+
+
+for event in VkLongPoll(session).listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-        msg = event.text.lower()
-        print(msg)
+        text = event.text.lower()
         user_id = event.user_id
-        random_id = random.randint(1, 10**10)
-        if msg == 'привет':
-            responce = random.choice(hi)
-            send_message(responce)
-        elif msg == "планеты":
-            responce = Parsing.planet(Parsing.urls)
-            send_message(responce)
-        elif msg.startswith('-к'):
-            val = msg[3:]
-            responce = f"{get_course(val)}"
-            send_message(responce)
-        elif msg == "корабль":
-            responce = starships.ship(starships.urls)
-            send_message(responce)
-        elif msg.startswith("-в"):
-            article = msg[2:]
-            responce = get_article(article=article)
-            send_message(responce)
-        else:
-            responce = f"неизвестная команда"
-            send_message(responce)
+
+        if text == "start":
+            keyboard = Keyboard(
+                [
+                    [
+                        Text("RED", ButtonColor.NEGATIVE),
+                        Text("GREEN", ButtonColor.POSITIVE),
+                        Text("BLUE", ButtonColor.PRIMARY),
+                        Text("WHITE")
+                    ],
+                    [
+                        OpenLink("YouTube", "https://youtube.com/c/Фсоки"),
+                        Location()
+                    ]
+                ]
+            )
+
+            send_message(user_id, "New Keyboard", keyboard=keyboard.add_keyboard())
+        elif text == "test":
+            carousel = Carousel(
+                [
+                    Element(
+                        "Title 1",
+                        "Description 1",
+                        "-203980592_457239030",
+                        "https://vk.com/fsoky",
+                        [Text("Button 1", ButtonColor.NEGATIVE)]
+                    ),
+                    Element(
+                        "Title 2",
+                        "Description 2",
+                        "-203980592_457239030",
+                        "https://vk.com/fsoky",
+                        [Text("Button 2", ButtonColor.PRIMARY)]
+                    )
+                ]
+            )
+
+            send_message(user_id, "Carousel", template=carousel.add_carousel())
