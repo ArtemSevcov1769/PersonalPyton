@@ -9,7 +9,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 
 from vktools import Keyboard, ButtonColor, Text, OpenLink, Location, Carousel, Element
 
-with open("Key.txt") as file:
+with open("../VPR_bot/Key.txt") as file:
     token = file.readline()
 
 session = vk_api.VkApi(token=token)
@@ -40,7 +40,7 @@ for event in VkLongPoll(session).listen():
                         Text("WHITE")
                     ],
                     [
-                        OpenLink("YouTube", "https://youtube.com/c/Фсоки"),
+                        OpenLink("YouTube", "https://youtube.com/c/"),
                         Location()
                     ]
                 ]
