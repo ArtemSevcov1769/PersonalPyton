@@ -5,10 +5,12 @@ import data_based
 
 with open("Key.txt") as file:
     token = file.readline()
+
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 upload = vk_api.VkUpload(vk)
 longpoll = VkLongPoll(vk_session)
+
 def get_but(text, color):
     return{
         "action": {
@@ -21,8 +23,10 @@ def get_but(text, color):
 keyboard = {
     "one_time": False,
     "buttons": [
-        [get_but("Математика", 'positive'), get_but("Русский", 'positive')],
-        [get_but("привет", 'positive'), get_but("пока", 'positive')]
+        [get_but('Математика', 'secondary'), get_but('Русский', 'secondary'), get_but('Биология', 'secondary'), get_but('География', 'secondary')],
+        [get_but('Физика', 'secondary'), get_but('Химия', 'secondary'), get_but('История', 'secondary'), get_but('Обществознание', 'secondary')],
+        [get_but('Назад(главное меню)', 'negative')]
+
     ]
 }
 keyboard = json.dumps(keyboard, ensure_ascii=False).encode('utf-8')
@@ -39,45 +43,36 @@ class Result:
                 msg = event.text.lower()
                 if msg[0].isdigit() and 5 <= int(msg[0]) <= 8:
                     send_message(data_based.get_scores(self.data_b, int(msg)))
+                elif 'рус' in msg:
+                    rus.get_result()
+                elif 'мат' in msg:
+                    math.get_result()
+                elif 'био' in msg:
+                    bio.get_result()
+                elif 'гео' in msg:
+                    geo.get_result()
+                elif 'ист' in msg:
+                    hist.get_result()
+                elif 'общ' in msg:
+                    obsh.get_result()
+                elif 'физ' in msg:
+                    phiz.get_result()
+                elif 'хим' in msg:
+                    him.get_result()
+                elif 'наз' in msg:
                     send_message('Выберите предмет')
+                    break
+                else:
                     break
 
 rus = Result('русскому языку', data_based.data_rus)
 math = Result('математике', data_based.data_math)
-# def rus():
-#     send_message('Введите свой код для получения результатов по русскому языку:')
-#     for event in longpoll.listen():
-#         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.user_id == peer_id:
-#             msg = event.text.lower()
-#             if msg[0].isdigit() and 5 <= int(msg[0]) <= 8:
-#                 send_message(data_based.get_scores(data_based.data_rus, int(msg)))
-#                 break
-#             elif 'мат' in msg:
-#                 math()
-#                 return
-#             elif 'рус' in msg:
-#                 send_message('Введите свой код для получения результатов по русскому языку:')
-#                 continue
-#             else:
-#                 send_message('Неизвестный запрос. Введите "математика" для математики или "русский" для русского языка')
-#                 continue
-# def math():
-#     send_message('Введите свой код для получения результатов по математике:')
-#     for event in longpoll.listen():
-#         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.user_id == peer_id:
-#             msg = event.text.lower()
-#             if msg[0].isdigit() and 5 <= int(msg[0]) <= 8:
-#                 send_message(data_based.get_scores(data_based.data_math, int(msg)))
-#             elif 'рус' in msg:
-#                 rus()
-#                 return
-#             elif 'мат' in msg:
-#                 send_message('Введите свой код для получения результатов по математике:')
-#                 continue
-#             else:
-#                 send_message('Неизвестный запрос. Введите "математика" для математики или "русский" для русского языка')
-#                 continue
-
+bio = Result('биологии', data_based.data_bio)
+geo = Result('географии', data_based.data_geo)
+hist = Result('истории', data_based.data_hist)
+obsh = Result('обществознанию', data_based.data_obsh)
+him = Result('химии', data_based.data_him)
+phiz = Result('физике', data_based.data_phiz)
 
 def send_message(resp):
     vk_session.method('messages.send', {'peer_id': peer_id, 'message': resp, 'random_id': 0, 'keyboard': keyboard})
@@ -90,6 +85,17 @@ for event in longpoll.listen():
             rus.get_result()
         elif 'мат' in msg:
             math.get_result()
+        elif 'био' in msg:
+            bio.get_result()
+        elif 'гео' in msg:
+            geo.get_result()
+        elif 'ист' in msg:
+            hist.get_result()
+        elif 'общ' in msg:
+            obsh.get_result()
+        elif 'физ' in msg:
+            phiz.get_result()
+        elif 'хим' in msg:
+            him.get_result()
         else:
-            pass
-
+            continue
