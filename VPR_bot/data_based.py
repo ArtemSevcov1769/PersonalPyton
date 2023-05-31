@@ -1,6 +1,8 @@
 import pandas as pd
-data = pd.read_csv("Book.csv")
-def get_scores(code):
+data_test = pd.read_csv("Book.csv")
+data_math = pd.read_csv("math_8.csv")
+data_rus = pd.read_csv('rus_8.csv')
+def get_scores(data, code):
     string = data.loc[data['Код'] == code].copy()
     string.loc[:, 'Код'] = string.loc[:, 'Код'].astype(float)
     string.loc[:, 'Итого баллов'] = string.loc[:, 'Итого баллов'].astype(float)

@@ -1,69 +1,64 @@
-import pygame, random, math
+import random, vk_api, vk
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from vk_api.utils import get_random_id
 
-pygame.init()
+vk_session = vk_api.VkApi(token='vk1.a.juE4Z-Uz4UhNWL53llfBsnGyO0UXdqZGxmtdJdk_0d65wTzcszh-e1MlO6z3auCCDNANpzv8cHbwpxOBLmn4cdon-PFa1O6d6dK6-DOaFwCzJ49xg46ZfZpmQJl4uUdQ7krSZmkZCdPyHFDDj3V9fynJU7CzcRSMLNTBs8noHbuIRjWbgA9yNSTVYRzvQh8or4JOpT0VEqG2mHmvYOGpJw')
+from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+longpoll = VkBotLongPoll(vk_session, 219717133)
+vk = vk_session.get_api()
+from vk_api.longpoll import VkLongPoll, VkEventType
+Lslongpoll = VkLongPoll(vk_session)
+Lsvk = vk_session.get_api()
 
-window_width = 700
-window_height = 500
-window = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption('Сквозь вселенную')
+keyboard = VkKeyboard(one_time=True)
+keyboard.add_button('Привет', color=VkKeyboardColor.NEGATIVE)
+keyboard.add_button('Клавиатура', color=VkKeyboardColor.POSITIVE)
+keyboard.add_line()
+keyboard.add_location_button()
+keyboard.add_line()
+keyboard.add_vkpay_button(hash="action=transfer-to-group&group_id=еще_раз_ID_группы")
 
-background = pygame.transform.scale(pygame.image.load('black.png'), (window_width, window_height))
-
-red = (255, 0, 0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
-purple = (139, 0, 139)
-yellow = (255, 255, 0)
-
-class GameSprite(pygame.sprite.Sprite):
-    def __init__(self, player_x, player_y, size_x, size_y, speed, surface):
-        super().__init__()
-        colors = [red, green, blue, purple, yellow]
-        self.image = pygame.Surface((size_x, size_y))
-        self.image.fill(random.choice(colors))
-        self.speed = speed
-        self.rect = self.image.get_rect()
-        self.rect.x = player_x
-        self.rect.y = player_y
-        self.surface = surface
-
-class Enemy(GameSprite):
-    def __init__(self, player_x, player_y, size_x, size_y, speed, surface):
-        super().__init__(player_x, player_y, size_x, size_y, speed, surface)
-        self.angle = random.uniform(0, 360)
-
-    def update(self):
-        x = math.cos(math.radians(self.angle)) * self.speed
-        y = math.sin(math.radians(self.angle)) * self.speed
-        self.rect.x += x
-        self.rect.y += y
-        if self.rect.left < 0 or self.rect.right > window_width or self.rect.top < 0 or self.rect.bottom > window_height:
-            self.rect.x = random.randint(349, 351)
-            self.rect.y = random.randint(249, 251)
-            self.angle = random.uniform(0, 360)
-
-enemy_size = 2
-enemy_speed = 2
-enemies = pygame.sprite.Group()
-for i in range(80):
-    enemy = Enemy(random.randint(349, 351), random.randint(249, 251), enemy_size, enemy_size, enemy_speed, window)
-    enemies.add(enemy)
-
-clock = pygame.time.Clock()
-
-run = True
-while run:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-
-    window.blit(background, (0, 0))
-
-    enemies.update()
-    enemies.draw(window)
-
-    pygame.display.update()
-
-    clock.tick(60)
-
-pygame.quit()
+for event in longpoll.listen():
+    if event.type == VkBotEventType.MESSAGE_NEW:
+        if 'Ку' in str(event) or 'Привет' in str(event) or 'Хай' in str(event) or 'Хелло' in str(event) or 'Хеллоу' in str(event):
+            if event.from_chat:
+                vk.messages.send(
+                    key = (''),          #ВСТАВИТЬ ПАРАМЕТРЫ
+                    server = (''),
+                    ts=(''),
+                    random_id = get_random_id(),
+              	    message='Привет!',
+            	    chat_id = event.chat_id
+                    )
+        if 'Клавиатура' in str(event):
+            if event.from_chat:
+                vk.messages.send(
+                    keyboard = keyboard.get_keyboard(),
+                    key = (''),          #ВСТАВИТЬ ПАРАМЕТРЫ
+                    server = (''),
+                    ts=(''),
+                    random_id = get_random_id(),
+              	    message='Держи',
+             	    chat_id = event.chat_id
+            	    )
+'''
+for event in Lslongpoll.listen():
+    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+        vars1 = ['Привет', 'Ку', 'Хай', 'Хеллоу']
+        if event.text in vars1:
+            if event.from_user:
+                Lsvk.messages.send(
+                    user_id = event.user_id,
+                    message = 'Привет)',
+                    random_id = get_random_id()
+                    )
+        vars2 = ['Клавиатура', 'клавиатура']
+        if event.text in vars2:
+            if event.from_user:
+                Lsvk.messages.send(
+                    user_id = event.user_id,
+                    random_id = get_random_id(),
+                    keyboard = keyboard.get_keyboard(),
+                    message = 'Держи'
+                    )
+'''
