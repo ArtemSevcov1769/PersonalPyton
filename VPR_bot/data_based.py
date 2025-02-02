@@ -1,8 +1,8 @@
 import pandas as pd
 data_math = pd.read_csv("math.csv")
 data_rus = pd.read_csv('rus.csv')
-data_bio = pd.ExcelFile('bio.xlsx', engine='openpyxl')
-data_geo = pd.ExcelFile('geo.xlsx', engine='openpyxl')
+data_bio = pd.read_excel('bio.xlsx')
+data_geo = pd.read_excel('geo.xlsx')
 data_obsh = pd.read_excel('obsh.xlsx')
 data_hist = pd.read_excel('hist.xlsx')
 data_him = pd.read_excel('him.xlsx')

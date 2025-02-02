@@ -1,12 +1,14 @@
-from aiogram import Bot, Dispatcher, types, executor
+import asyncio
+
+from aiogram import Bot, Dispatcher, types
 import data_based
 
 bot = Bot(token='7036308915:AAGwZ3I90LgBG_KfrJiXkhjZWK_JNVxomXY')
-dp = Dispatcher(bot)
+dp = Dispatcher()
 
 subject_selection = {}
 
-@dp.message_handler(commands=['start'])
+@dp.message(router=['start'])
 async def on_message(message: types.Message):
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     markup.add(types.KeyboardButton("Математика"), types.KeyboardButton("Русский"))
@@ -55,6 +57,7 @@ async def handle_code(message: types.Message):
     except:
         await bot.send_message(message.chat.id, 'Неверный код. Попробуйте еще раз.')
 
-
+async def main():
+    await dp.start_polling(bot)
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
